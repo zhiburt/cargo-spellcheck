@@ -354,7 +354,8 @@ pub(crate) fn extract(
                     }
                     CheckEntity::Markdown(path) => {
                         let content = std::fs::read_to_string(&path).unwrap(); // @todo error handling
-                        let source_mapping = IndexMap::new(); // @todo source map should be trivial, start to end
+                        let source_mapping = source_mapping_from_plain_text(&content);
+
                         docs.add(
                             ContentOrigin::CommonMarkFile(path.to_owned()),
                             vec![CheckableChunk::from_string(content, source_mapping)],
@@ -370,6 +371,35 @@ pub(crate) fn extract(
         )?;
 
     Ok(combined)
+}
+
+fn source_mapping_from_plain_text(content: &str) -> indexmap::IndexMap<Range, Span> {
+    let lines = content.lines().collect::<Vec<&str>>();
+    let n = lines.len();
+    let mut source_mapping = indexmap::IndexMap::with_capacity(n);
+    for (i, line) in lines.into_iter().enumerate() {
+        // probably there's no reason in it
+        // e.g. empty string handled now like that 72..72 Span { start: LineColumn { line: 33, column: 3 }, end: LineColumn { line: 33, column: 2 } }
+        if line.trim().is_empty() {
+            continue;
+        }
+
+        let span = Span {
+            start: proc_macro2::LineColumn {
+                line: i,
+                column: 0,
+            },
+            end: proc_macro2::LineColumn {
+                line: i,
+                column: line.len(),
+            },
+        };
+        let range = Range { start: 0, end: line.len() };
+        // println!("{:?} {:?}", span, range);
+        source_mapping.insert(range, span);
+    }
+
+    source_mapping
 }
 
 #[cfg(test)]
