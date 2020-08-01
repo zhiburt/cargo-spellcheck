@@ -18,7 +18,11 @@ pub struct HunspellChecker;
 
 impl Checker for HunspellChecker {
     type Config = crate::config::HunspellConfig;
-    fn check<'a, 's>(docu: &'a Documentation, config: &Self::Config) -> Result<SuggestionSet<'s>>
+    fn check<'a, 's>(
+        docu: &'a Documentation,
+        quirks: Option<&crate::Quirks>,
+        config: &Self::Config,
+    ) -> Result<SuggestionSet<'s>>
     where
         'a: 's,
     {
@@ -122,7 +126,13 @@ impl Checker for HunspellChecker {
                     let txt = plain.as_str();
                     for range in tokenize(txt) {
                         let word = sub_chars(txt, range.clone());
-                        if !hunspell.check(&word) {
+                        eprintln!("WORD!! {:?}", word);
+                        let trimed_word = quirks
+                            .unwrap()
+                            .check_quirk(&word)
+                            .map_or(word.as_str(), |w| w);
+                        eprintln!("trimed_word!! {:?}", trimed_word);
+                        if !hunspell.check(&trimed_word) {
                             trace!("No match for word (plain range: {:?}): >{}<", &range, &word);
                             // get rid of single character suggestions
                             let replacements = hunspell

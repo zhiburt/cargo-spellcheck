@@ -16,7 +16,11 @@ pub struct DummyChecker;
 impl Checker for DummyChecker {
     type Config = ();
 
-    fn check<'a, 's>(docu: &'a Documentation, _: &Self::Config) -> Result<SuggestionSet<'s>>
+    fn check<'a, 's>(
+        docu: &'a Documentation,
+        _: Option<&crate::Quirks>,
+        _: &Self::Config,
+    ) -> Result<SuggestionSet<'s>>
     where
         'a: 's,
     {

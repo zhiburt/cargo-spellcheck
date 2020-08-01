@@ -14,7 +14,11 @@ pub struct LanguageToolChecker;
 
 impl Checker for LanguageToolChecker {
     type Config = crate::config::LanguageToolConfig;
-    fn check<'a, 's>(docu: &'a Documentation, config: &Self::Config) -> Result<SuggestionSet<'s>>
+    fn check<'a, 's>(
+        docu: &'a Documentation,
+        _: Option<&crate::Quirks>,
+        config: &Self::Config,
+    ) -> Result<SuggestionSet<'s>>
     where
         'a: 's,
     {

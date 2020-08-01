@@ -19,7 +19,11 @@ mod languagetool;
 /// Implementation for a checker
 pub(crate) trait Checker {
     type Config;
-    fn check<'a, 's>(docu: &'a Documentation, config: &Self::Config) -> Result<SuggestionSet<'s>>
+    fn check<'a, 's>(
+        docu: &'a Documentation,
+        _: Option<&crate::Quirks>,
+        config: &Self::Config,
+    ) -> Result<SuggestionSet<'s>>
     where
         'a: 's;
 }
@@ -76,6 +80,8 @@ pub fn check<'a, 's>(documentation: &'a Documentation, config: &Config) -> Resul
 where
     'a: 's,
 {
+    let quirks = crate::Quirks::from_cfg(config);
+
     let mut collective = SuggestionSet::<'s>::new();
 
     #[cfg(feature = "languagetool")]
@@ -102,7 +108,9 @@ where
                 .hunspell
                 .as_ref()
                 .expect("Must be Some(HunspellConfig) if is_enabled returns true");
-            if let Ok(suggestions) = self::hunspell::HunspellChecker::check(documentation, config) {
+            if let Ok(suggestions) =
+                self::hunspell::HunspellChecker::check(documentation, Some(&quirks), config)
+            {
                 collective.join(suggestions);
             }
         }
@@ -153,7 +161,7 @@ pub mod tests {
             content,
         ));
         let suggestion_set =
-            dummy::DummyChecker::check(&d, &()).expect("Dummy extraction must never fail");
+            dummy::DummyChecker::check(&d, None, &()).expect("Dummy extraction must never fail");
 
         // one file
         assert_eq!(suggestion_set.len(), 1);

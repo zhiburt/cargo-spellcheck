@@ -6,6 +6,7 @@ mod span;
 mod suggestion;
 mod traverse;
 mod util;
+mod quirks;
 
 pub use self::action::*;
 pub use self::config::{Config, HunspellConfig, LanguageToolConfig};
@@ -13,6 +14,7 @@ pub use self::documentation::*;
 pub use self::span::*;
 pub use self::suggestion::*;
 pub use self::util::*;
+pub use self::quirks::*;
 
 use docopt::Docopt;
 

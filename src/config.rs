@@ -18,6 +18,7 @@ use std::path::{Path, PathBuf};
 pub struct Config {
     pub hunspell: Option<HunspellConfig>,
     pub languagetool: Option<LanguageToolConfig>,
+    pub quirks: Option<Vec<String>>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -241,6 +242,7 @@ impl Default for Config {
                 extra_dictonaries: Some(Vec::new()),
             }),
             languagetool: None,
+            quirks: None,
         }
     }
 }

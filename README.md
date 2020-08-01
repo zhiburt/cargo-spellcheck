@@ -122,7 +122,7 @@ Requires a C++ compiler to compile the hunspell CXX source files which are part 
 dnf install -y clang
 ```
 
-##### Ubuntu 19.10+
+##### Ubuntu 19.101xx x
 ```sh
 apt install -y clang
 ```
@@ -141,3 +141,8 @@ export LLVM_CONFIG_PATH=/usr/local/opt/llvm/bin/llvm-config
 #### LanguageTool
 
 Run a instance of the [LanguageTool server i.e. as container](https://hub.docker.com/r/erikvl87/languagetool).
+
+
+'dude'
+'"here we are"'
+"23123"
